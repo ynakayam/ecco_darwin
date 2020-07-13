@@ -1,0 +1,27 @@
+==============
+%How to build executable for Totten regional ECCO-Darwin run
+
+
+# Build executable for ECCO-Darwin version 4 with Darwin3
+git clone git://gud.mit.edu/darwin3-dev darwin3
+cd darwin3
+git checkout ecco_darwin_v4_llc270_darwin3
+cd ecco_darwin/regions/totten/
+mkdir build
+cd build
+module purge
+module load comp-intel/2016.2.181 mpi-sgi/mpt.2.14r19 hdf4/4.2.12 hdf5/1.8.18_mpt netcdf/4.4.1.1_mpt
+../../../tools/genmake2 -of \
+  ../code/linux_amd64_ifort+mpi_ice_nas -mo '../code_darwin ../code'
+make depend
+make -j 16
+
+==============
+# Instructions for running ECCO-Darwin Version 4 for 1992-2018 period
+cd ..
+mkdir run
+cd run
+cp ../build/mitgcmuv .
+cp ../input*s*/* .
+ln -sf /nobackup/hzhang1/forcing/era_xx .
+qsub run12_sandy_tracer_init.pbs
